@@ -38,7 +38,6 @@ static int cloud(int argc, char *argv[])
   return 0;
 }
 
-/** @brief edge_nodes expects a single argument given in the XML deployment file: */
 static int edge_node(int argc, char *argv[])
 {
   msg_task_t task = NULL;

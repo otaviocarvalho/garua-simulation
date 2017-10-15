@@ -1,27 +1,26 @@
 <?xml version='1.0'?>
 <!DOCTYPE platform SYSTEM "http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd">
 <platform version="4">
+
     <!-- The cloud process (with some arguments) -->
-    <process host="100030591" function="cloud">
-       <argument value="10"/>       <!-- Number of tasks -->
+    <process host="cloud-0" function="cloud">
+       <argument value="40000"/>       <!-- Number of tasks -->
        <argument value="50000000"/>  <!-- Computation size of tasks -->
        <argument value="1000000"/>   <!-- Communication size of tasks -->
-       <argument value="15"/>         <!-- Number of edge nodes -->
+       <argument value="4"/>         <!-- Number of edge nodes -->
     </process>
     <!-- The edge node processes (with mailbox to listen on as argument) -->
-    <process host="100036570" function="edge_node">   <argument value="0"/> </process>
-    <process host="100041334" function="edge_node">   <argument value="1"/> </process>
-    <process host="100055671" function="edge_node">   <argument value="2"/> </process>
-    <process host="100066658" function="edge_node">   <argument value="3"/> </process>
-    <process host="100090691" function="edge_node">   <argument value="4"/> </process>
-    <process host="100094952" function="edge_node">   <argument value="5"/> </process>
-    <process host="100117943" function="edge_node">   <argument value="6"/> </process>
-    <process host="100126290" function="edge_node">   <argument value="7"/> </process>
-    <process host="100144483" function="edge_node">   <argument value="8"/> </process>
-    <process host="100152889" function="edge_node">   <argument value="9"/> </process>
-    <process host="100178474" function="edge_node">   <argument value="10"/> </process>
-    <process host="100180261" function="edge_node">   <argument value="11"/> </process>
-    <process host="100185883" function="edge_node">   <argument value="12"/> </process>
-    <process host="100186365" function="edge_node">   <argument value="13"/> </process>
-    <process host="100200866" function="edge_node">   <argument value="14"/> </process>
+    <process host="edge-node-0" function="edge_node">
+        <argument value="0"/>
+    </process>
+    <process host="edge-node-1" function="edge_node">
+        <argument value="1"/>
+    </process>
+    <process host="edge-node-2" function="edge_node">
+        <argument value="2"/>
+    </process>
+    <process host="edge-node-3" function="edge_node">
+        <argument value="3"/>
+    </process>
+
 </platform>
