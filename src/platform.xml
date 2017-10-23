@@ -4,39 +4,39 @@
 
     <!-- The cloud process (with some arguments) -->
     <process host="cloud-0" function="cloud">
-       <argument value="40"/>       <!-- Total number of tasks -->
+       <argument value="400"/>       <!-- Total number of tasks -->
        <argument value="4"/>         <!-- Number of edge nodes -->
     </process>
     <!-- The edge node processes (with mailbox to listen on as argument) -->
     <process host="edge-node-0" function="edge_node">
        <argument value="0"/>       <!-- Edge node id -->
-       <argument value="40"/>       <!-- Total number of tasks -->
-       <argument value="50000000"/>  <!-- Computation size of tasks -->
-       <argument value="1000000"/>   <!-- Communication size of tasks -->
+       <argument value="400"/>       <!-- Total number of tasks -->
+       <argument value="1"/>  <!-- Computation size of tasks -->
+       <argument value="1"/>   <!-- Communication size of tasks -->
        <argument value="1"/>         <!-- Number of cloud nodes -->
        <argument value="4"/>         <!-- Number of edge nodes -->
     </process>
     <process host="edge-node-1" function="edge_node">
        <argument value="1"/>       <!-- Edge node id -->
-       <argument value="40"/>       <!-- Total number of tasks -->
-       <argument value="50000000"/>  <!-- Computation size of tasks -->
-       <argument value="1000000"/>   <!-- Communication size of tasks -->
+       <argument value="400"/>       <!-- Total number of tasks -->
+       <argument value="1"/>  <!-- Computation size of tasks -->
+       <argument value="1"/>   <!-- Communication size of tasks -->
        <argument value="1"/>         <!-- Number of cloud nodes -->
        <argument value="4"/>         <!-- Number of edge nodes -->
     </process>
     <process host="edge-node-2" function="edge_node">
        <argument value="2"/>       <!-- Edge node id -->
-       <argument value="40"/>       <!-- Total number of tasks -->
-       <argument value="50000000"/>  <!-- Computation size of tasks -->
-       <argument value="1000000"/>   <!-- Communication size of tasks -->
+       <argument value="400"/>       <!-- Total number of tasks -->
+       <argument value="1"/>  <!-- Computation size of tasks -->
+       <argument value="1"/>   <!-- Communication size of tasks -->
        <argument value="1"/>         <!-- Number of cloud nodes -->
        <argument value="4"/>         <!-- Number of edge nodes -->
     </process>
     <process host="edge-node-3" function="edge_node">
        <argument value="3"/>       <!-- Edge node id -->
-       <argument value="40"/>       <!-- Total number of tasks -->
-       <argument value="50000000"/>  <!-- Computation size of tasks -->
-       <argument value="1000000"/>   <!-- Communication size of tasks -->
+       <argument value="400"/>       <!-- Total number of tasks -->
+       <argument value="1"/>  <!-- Computation size of tasks -->
+       <argument value="1"/>   <!-- Communication size of tasks -->
        <argument value="1"/>         <!-- Number of cloud nodes -->
        <argument value="4"/>         <!-- Number of edge nodes -->
     </process>

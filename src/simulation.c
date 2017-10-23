@@ -15,6 +15,8 @@ static int edge_node(int argc, char *argv[])
     int task_slice_size = number_of_tasks / edge_nodes_count;
     int slice_start = (edge_node_id % number_of_tasks) * task_slice_size;
     int slice_end = slice_start + task_slice_size;
+    XBT_INFO("### slice start %d : slice end %d", slice_start, slice_end);
+
     for (i = slice_start; i < slice_end; i++) {  /** For each task to be executed: */
         char mailbox[256];
         char task_name[256];
@@ -22,8 +24,8 @@ static int edge_node(int argc, char *argv[])
         sprintf(mailbox, "cloud-0"); /** - Select a @ref cloud node in a round-robin way */
         sprintf(task_name, "Task_%d", i);
         msg_task_t task = MSG_task_create(task_name, comp_size, comm_size, NULL);   /** - Create a task */
-        if (number_of_tasks < 10000 || i % 10000 == 0)
-            XBT_INFO("Sending \"%s\" (of %ld) to mailbox \"%s\"", task->name, number_of_tasks, mailbox);
+
+        XBT_INFO("Sending \"%s\" (of %ld) to mailbox \"%s\"", task->name, number_of_tasks, mailbox);
 
         MSG_task_send(task, mailbox); /** - Send the task to the @ref edge node */
 
@@ -69,6 +71,7 @@ static int cloud(int argc, char *argv[])
 
             // Finish when has received all edge node tasks
             if (num_finalized_tasks == number_of_tasks) {
+                XBT_INFO("Number of tasks completed: %ld", number_of_tasks);
                 XBT_INFO("Finishing cloud node, bye!");
                 break;
             }

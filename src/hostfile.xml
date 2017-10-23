@@ -1,28 +1,24 @@
 <?xml version='1.0'?>
 <!DOCTYPE platform SYSTEM "http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd">
 <platform version="4">
-    <AS id="AS0" routing="Full">
-        <host id="cloud-0" speed="1.0Gf" />
-        <host id="edge-node-0" speed="0.3Gf" />
-        <host id="edge-node-1" speed="0.3Gf" />
-        <host id="edge-node-2" speed="0.3Gf" />
-        <host id="edge-node-3" speed="0.3Gf" />
 
-        <link id="wifi-0"  bandwidth="41.279125MBps" latency="59.904us"/>
-        <link id="dsl-0" bandwidth="4.67975MBps" latency="848.712us"/>
+    <AS id="wifi-as-0" routing="Full">
+        <cluster id="edge-cluster-0" prefix="edge-node-" suffix=""
+                radical="0-3" speed="0.3Gf" bw="2Mbps" lat="1280ms"
+        router_id="router-edge"/>
 
-        <route src="edge-node-0" dst="cloud-0">
+        <AS id="cloud-as-0" routing="None">
+            <host id="cloud-0" speed="1.0Gf" />
+        </AS>
+
+        <link id="dsl-0" bandwidth="4Mbps" latency="525ms"/>
+
+        <ASroute src="edge-cluster-0" dst="cloud-as-0"
+            gw_src="router-edge"
+            gw_dst="cloud-0">
             <link_ctn id="dsl-0"/>
-        </route>
-        <route src="edge-node-1" dst="cloud-0">
-            <link_ctn id="dsl-0"/>
-        </route>
-        <route src="edge-node-2" dst="cloud-0">
-            <link_ctn id="dsl-0"/>
-        </route>
-        <route src="edge-node-3" dst="cloud-0">
-            <link_ctn id="dsl-0"/>
-        </route>
+        </ASroute>
 
     </AS>
+
 </platform>
