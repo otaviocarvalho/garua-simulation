@@ -4,18 +4,22 @@
 
     <AS id="wifi-as-0" routing="Full">
         <cluster id="edge-cluster-0" prefix="edge-node-" suffix=""
-                radical="0-3" speed="0.3Gf" bw="2Mbps" lat="1280ms"
+                radical="0-2" speed="0.3Gf" bw="2Mbps" lat="20ms"
         router_id="router-edge"/>
 
         <AS id="cloud-as-0" routing="None">
-            <host id="cloud-0" speed="1.0Gf" />
+            <!--<host id="cloud-0" speed="1.0Gf" />-->
+
+            <cluster id="cloud-cluster-0" prefix="cloud-" suffix=""
+                    radical="0-2" speed="1.0Gf" bw="1Gbps" lat="0.02ms"
+            router_id="router-cloud"/>
         </AS>
 
-        <link id="dsl-0" bandwidth="4Mbps" latency="525ms"/>
+        <link id="dsl-0" bandwidth="48Mbps" latency="2ms"/>
 
         <ASroute src="edge-cluster-0" dst="cloud-as-0"
             gw_src="router-edge"
-            gw_dst="cloud-0">
+            gw_dst="router-cloud">
             <link_ctn id="dsl-0"/>
         </ASroute>
 
