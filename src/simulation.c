@@ -8,20 +8,13 @@ static int edge_node(int argc, char *argv[])
     long number_of_tasks = xbt_str_parse_int(argv[2], "Invalid amount of tasks: %s");    /** - Number of tasks      */
     double comp_size = xbt_str_parse_double(argv[3], "Invalid computational size: %s");  /** - Task compute cost    */
     double comm_size = xbt_str_parse_double(argv[4], "Invalid communication size: %s");  /** - Task communication size */
-    long cloud_nodes_count = xbt_str_parse_double(argv[5], "Invalid amount of cloud nodes: %s");  /** - Cloud nodes count */
-    long edge_nodes_count = xbt_str_parse_double(argv[6], "Invalid amount of edge nodes: %s");  /** - Edge nodes count */
 
     int i;
-    int task_slice_size = number_of_tasks / edge_nodes_count;
-    int slice_start = (edge_node_id % number_of_tasks) * task_slice_size;
-    int slice_end = slice_start + task_slice_size;
-    XBT_INFO("### slice start %d : slice end %d", slice_start, slice_end);
-
-    for (i = slice_start; i < slice_end; i++) {  /** For each task to be executed: */
+    for (i = 0; i < number_of_tasks; i++) {  /** For each task to be executed: */
         char mailbox[256];
         char task_name[256];
 
-        sprintf(mailbox, "cloud-0"); /** - Select a @ref cloud node in a round-robin way */
+        sprintf(mailbox, "cloud-%d", edge_node_id); // Send a message to the corresponding cloud node (simulating a thread on the cloud node per edge node)
         sprintf(task_name, "Task_%d", i);
         msg_task_t task = MSG_task_create(task_name, comp_size, comm_size, NULL);   /** - Create a task */
 
@@ -32,59 +25,42 @@ static int edge_node(int argc, char *argv[])
         task = NULL;
     }
 
-    XBT_INFO("All tasks have been dispatched. Let's tell everybody the computation is over.");
-    for (i = slice_start; i < slice_end; i++) { /** - Eventually tell all the cloud nodes to stop by sending a "finalize" task */
-        char mailbox[80];
-
-        sprintf(mailbox, "cloud-0");
-        msg_task_t finalize = MSG_task_create("finalize", 0, 0, 0);
-        XBT_INFO("Sending \"%s\" to mailbox \"%s\"", finalize->name, mailbox);
-        MSG_task_send(finalize, mailbox);
-    }
+    XBT_INFO("All tasks have been dispatched. Finishing edge node, bye!");
 
     return 0;
 }
 
 static int cloud(int argc, char *argv[])
 {
-    long number_of_tasks = xbt_str_parse_int(argv[1], "Invalid amount of tasks: %s");    /** - Number of tasks      */
-    long edge_nodes_count = xbt_str_parse_int(argv[2], "Invalid amount of edge nodes: %s");    /** - Number of edge nodes */
+    int cloud_node_id = xbt_str_parse_int(argv[1], "Invalid cloud node id: %s");    /** - Cloud node id */
+    long number_of_tasks = xbt_str_parse_int(argv[2], "Invalid amount of tasks: %s");    /** - Number of tasks      */
 
-    XBT_INFO("Got %ld edge nodes and a total of %ld tasks to process", edge_nodes_count, number_of_tasks);
+    XBT_INFO("Cloud node id %d got a total of %ld tasks to process", cloud_node_id, number_of_tasks);
 
     msg_task_t task = NULL;
     char mailbox[80];
 
-    sprintf(mailbox, "cloud-0"); /** - unique id of the cloud node */
+    sprintf(mailbox, "cloud-%d", cloud_node_id); /** - unique id of the cloud node */
 
     int num_finalized_tasks = 0;
     while (1) {  /** The cloud node wait in an infinite loop for tasks sent by \ref edge nodes */
         int res = MSG_task_receive(&(task), mailbox);
         xbt_assert(res == MSG_OK, "MSG_task_get failed");
 
-        /*XBT_INFO("Received \"%s\"", MSG_task_get_name(task));*/
-        if (!strcmp(MSG_task_get_name(task), "finalize")) {
-            MSG_task_destroy(task);
-            task = NULL;
+        XBT_INFO("Processing \"%s\"", MSG_task_get_name(task));
+        MSG_task_execute(task);
 
-            num_finalized_tasks++;
+        XBT_INFO("\"%s\" done", MSG_task_get_name(task));
+        MSG_task_destroy(task);
+        task = NULL;
 
-            // Finish when has received all edge node tasks
-            if (num_finalized_tasks == number_of_tasks) {
-                XBT_INFO("Number of tasks completed: %ld", number_of_tasks);
-                XBT_INFO("Finishing cloud node, bye!");
-                break;
-            }
+        num_finalized_tasks++;
+
+        if (num_finalized_tasks == number_of_tasks) {
+            XBT_INFO("Number of tasks completed: %ld", number_of_tasks);
+            XBT_INFO("Finishing cloud node, bye!");
+            break;
         }
-        else {
-            XBT_INFO("Processing \"%s\"", MSG_task_get_name(task));
-            MSG_task_execute(task);    /**  - Otherwise, process the task */
-
-            XBT_INFO("\"%s\" done", MSG_task_get_name(task));
-            MSG_task_destroy(task);
-            task = NULL;
-        }
-
     }
 
     return 0;
