@@ -32,16 +32,6 @@ static int edge_node(int argc, char *argv[])
         task = NULL;
     }
 
-    XBT_INFO("All tasks have been dispatched. Let's tell everybody the computation is over.");
-    for (i = slice_start; i < slice_end; i++) { /** - Eventually tell all the cloud nodes to stop by sending a "finalize" task */
-        char mailbox[80];
-
-        sprintf(mailbox, "cloud-0");
-        msg_task_t finalize = MSG_task_create("finalize", 0, 0, 0);
-        XBT_INFO("Sending \"%s\" to mailbox \"%s\"", finalize->name, mailbox);
-        MSG_task_send(finalize, mailbox);
-    }
-
     return 0;
 }
 
@@ -62,29 +52,21 @@ static int cloud(int argc, char *argv[])
         int res = MSG_task_receive(&(task), mailbox);
         xbt_assert(res == MSG_OK, "MSG_task_get failed");
 
-        /*XBT_INFO("Received \"%s\"", MSG_task_get_name(task));*/
-        if (!strcmp(MSG_task_get_name(task), "finalize")) {
-            MSG_task_destroy(task);
-            task = NULL;
+        XBT_INFO("Processing \"%s\"", MSG_task_get_name(task));
+        MSG_task_execute(task);    /**  - Otherwise, process the task */
 
-            num_finalized_tasks++;
+        XBT_INFO("\"%s\" done", MSG_task_get_name(task));
+        MSG_task_destroy(task);
+        task = NULL;
 
-            // Finish when has received all edge node tasks
-            if (num_finalized_tasks == number_of_tasks) {
-                XBT_INFO("Number of tasks completed: %ld", number_of_tasks);
-                XBT_INFO("Finishing cloud node, bye!");
-                break;
-            }
+        num_finalized_tasks++;
+
+        // Finish when has received all edge node tasks
+        if (num_finalized_tasks == number_of_tasks) {
+            XBT_INFO("Number of tasks completed: %ld", number_of_tasks);
+            XBT_INFO("Finishing cloud node, bye!");
+            break;
         }
-        else {
-            XBT_INFO("Processing \"%s\"", MSG_task_get_name(task));
-            MSG_task_execute(task);    /**  - Otherwise, process the task */
-
-            XBT_INFO("\"%s\" done", MSG_task_get_name(task));
-            MSG_task_destroy(task);
-            task = NULL;
-        }
-
     }
 
     return 0;
